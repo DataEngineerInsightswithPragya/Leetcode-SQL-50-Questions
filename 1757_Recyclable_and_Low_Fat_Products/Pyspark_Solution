@@ -1,0 +1,45 @@
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("test").getOrCreate()
+
+data = [
+    (0, 'Y', 'N'),
+    (1, 'Y', 'Y'),
+    (2, 'N', 'Y'),
+    (3, 'Y', 'Y'),
+    (4, 'N', 'N')
+]
+column_name = ["product_id","low_fats","recyclable"]
+product = spark.createDataFrame(data,column_name)
+product.show()
+display(product)
+
+# +----------+--------+----------+
+# |product_id|low_fats|recyclable|
+# +----------+--------+----------+
+# |         0|       Y|         N|
+# |         1|       Y|         Y|
+# |         2|       N|         Y|
+# |         3|       Y|         Y|
+# |         4|       N|         N|
+# +----------+--------+----------+
+
+filter_df = product.where((product['low_fats'] == 'Y') & (product['recyclable'] == 'Y'))
+filter_df.show()
+
+# +----------+--------+----------+
+# |product_id|low_fats|recyclable|
+# +----------+--------+----------+
+# |         1|       Y|         Y|
+# |         3|       Y|         Y|
+# +----------+--------+----------+
+
+
+final_df = filter_df.select('product_id')
+final_df.show()
+# +----------+
+# |product_id|
+# +----------+
+# |         1|
+# |         3|
+# +----------+
+
